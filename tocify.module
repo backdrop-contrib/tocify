@@ -1,0 +1,257 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function tocify_block_info() {
+  return [
+    'tocify_toc_block' => [
+      'info' => t('Table of Contents (Tocify)'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function tocify_block_view($delta = '') {
+  if ($delta === 'tocify_toc_block') {
+    $config = config_get('tocify.settings');
+
+    // Check if there is content to generate TOC for.
+    $has_content = FALSE;
+    if (arg(0) == 'node' && is_numeric(arg(1))) {
+      $node = node_load(arg(1));
+      if ($node && isset($node->body[LANGUAGE_NONE][0]['value'])) {
+        $body = $node->body[LANGUAGE_NONE][0]['value'];
+        $dom = new DOMDocument();
+        @$dom->loadHTML('<div>' . $body . '</div>');
+        $xpath = new DOMXPath($dom);
+        $heading_selector = $config['heading_selector'] ?? 'h1, h2, h3';
+        $selectors = explode(',', $heading_selector);
+        foreach ($selectors as $sel) {
+          $sel = trim($sel);
+          if (preg_match('/^h([1-6])$/', $sel, $m)) {
+            $level = $m[1];
+            $headings = $xpath->query('//h' . $level);
+            if ($headings->length > 0) {
+              $has_content = TRUE;
+              break;
+            }
+          }
+        }
+      }
+    }
+    else {
+      // Assume content exists for non-node pages.
+      $has_content = TRUE;
+    }
+
+    if (!$has_content) {
+      return;
+    }
+
+    $selector = check_plain($config['content_selector'] ?? '.node-content');
+
+    $settings = [
+      'tocifySelector' => $selector,
+      'tocifyOffset' => (int) ($config['scroll_offset'] ?? 80),
+      'tocifyCollapseDepth' => (int) ($config['collapse_depth'] ?? 6),
+      'tocifySmoothScroll' => !empty($config['smooth_scroll']),
+      'tocifyOrderedList' => !empty($config['ordered_list']),
+      'tocifyHeadingSelector' => $config['heading_selector'] ?? 'h1, h2, h3',
+      'tocifyIncludeHtml' => !empty($config['include_html']),
+      'tocifyDisableTocScrollSync' => !empty($config['disable_toc_scroll_sync']),
+      'tocifyActiveLinkClass' => $config['active_link_class'] ?? 'is-active-link',
+      'tocifyListClass' => $config['list_class'] ?? 'toc-list',
+      'tocifyLinkClass' => $config['link_class'] ?? 'toc-link',
+      'tocifyExtraLinkClass' => $config['extra_link_class'] ?? '',
+      'tocifyHeadingsOffset' => (int) ($config['headings_offset'] ?? 0),
+      'tocifyThrottleTimeout' => (int) ($config['throttle_timeout'] ?? 50),
+      'tocifyPositionFixedSelector' => $config['position_fixed_selector'] ?? '#tocify-toc',
+      'tocifyPositionFixedClass' => $config['position_fixed_class'] ?? 'is-fixed',
+      'tocifyFixedSidebarOffset' => $config['fixed_sidebar_offset'] ?? 'auto',
+      'tocifyCollapsedClass' => $config['collapsed_class'] ?? 'is-collapsed',
+    ];
+
+    $path = backdrop_get_path('module', 'tocify');
+
+    $build = [];
+    $build['#markup'] = '<div id="tocify-toc">[TOC block loaded]</div>';
+    $build['#attached']['js'][] = $path . '/js/tocbot.min.js';
+    $build['#attached']['js'][] = $path . '/js/tocify.js';
+    $build['#attached']['css'][] = $path . '/css/tocbot.css';
+    $build['#attached']['css'][] = $path . '/css/tocify.css';
+    $build['#attached']['js'][] = ['type' => 'setting', 'data' => $settings];
+
+    if (!empty($config['enable_collapse'])) {
+      $build['#attached']['js'][] = [
+        'type' => 'inline',
+        'scope' => 'footer',
+        'data' => "document.addEventListener('DOMContentLoaded', function() { document.body.classList.add('tocify-collapse-enabled'); });",
+      ];
+    }
+
+    if (!empty($config['collapse_depth']) && (int) $config['collapse_depth'] > 0) {
+      $build['#attached']['js'][] = [
+        'type' => 'inline',
+        'scope' => 'footer',
+        'data' => "document.addEventListener('DOMContentLoaded', function() {
+          function uncollapseTOC() {
+            document.querySelectorAll('.is-collapsed').forEach(el => el.classList.remove('is-collapsed'));
+          }
+          uncollapseTOC();
+          window.addEventListener('scroll', uncollapseTOC, { passive: true });
+        });",
+      ];
+    }
+
+    return [
+      'subject' => t('Table of Contents'),
+      'content' => $build,
+    ];
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function tocify_menu() {
+  $items['admin/config/user-interface/tocify'] = array(
+    'title' => 'Tocify settings',
+    'description' => 'Configure the behavior of the Table of Contents module.',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('tocify_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Settings form.
+ */
+function tocify_settings_form($form, &$form_state) {
+  $config = config('tocify.settings');
+  $form['#config'] = 'tocify.settings';
+
+  $form['content_selector'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Content container selector'),
+    '#default_value' => $config->get('content_selector') ?? '.node-content',
+    '#description' => t('CSS selector for the content area where headings will be scanned.'),
+  );
+
+  $form['heading_selector'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Heading selector'),
+    '#default_value' => $config->get('heading_selector') ?? 'h1, h2, h3',
+    '#description' => t('Comma-separated list of heading tags to include (e.g. h1, h2, h3).'),
+  );
+
+  $form['scroll_offset'] = array(
+    '#type' => 'number',
+    '#title' => t('Scroll offset'),
+    '#default_value' => $config->get('scroll_offset') ?? 80,
+    '#description' => t('Number of pixels to offset scrolling for fixed headers.'),
+  );
+
+  $form['collapse_depth'] = array(
+    '#type' => 'number',
+    '#title' => t('Collapse depth'),
+    '#default_value' => $config->get('collapse_depth') ?? 6,
+    '#description' => t('Number of heading levels to show expanded.'),
+  );
+
+  $form['smooth_scroll'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable smooth scroll'),
+    '#default_value' => $config->get('smooth_scroll'),
+  );
+
+  $form['ordered_list'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use ordered list'),
+    '#default_value' => $config->get('ordered_list'),
+  );
+
+  $form['include_html'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Include HTML inside headings'),
+    '#default_value' => $config->get('include_html'),
+  );
+
+  $form['advanced'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Advanced settings'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $form['advanced']['disable_toc_scroll_sync'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable scroll sync'),
+    '#default_value' => $config->get('disable_toc_scroll_sync'),
+  );
+
+  $form['advanced']['headings_offset'] = array(
+    '#type' => 'number',
+    '#title' => t('Headings offset (for highlighting logic)'),
+    '#default_value' => $config->get('headings_offset') ?? 0,
+  );
+
+  $form['advanced']['throttle_timeout'] = array(
+    '#type' => 'number',
+    '#title' => t('Throttle timeout (ms)'),
+    '#default_value' => $config->get('throttle_timeout') ?? 50,
+  );
+
+  $form['advanced']['active_link_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Active link class'),
+    '#default_value' => $config->get('active_link_class') ?? 'is-active-link',
+  );
+
+  $form['advanced']['list_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('List class'),
+    '#default_value' => $config->get('list_class') ?? 'toc-list',
+  );
+
+  $form['advanced']['link_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link class'),
+    '#default_value' => $config->get('link_class') ?? 'toc-link',
+  );
+
+  $form['advanced']['extra_link_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Extra link class'),
+    '#default_value' => $config->get('extra_link_class') ?? '',
+  );
+
+  $form['advanced']['position_fixed_selector'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Fixed position selector'),
+    '#default_value' => $config->get('position_fixed_selector') ?? '#tocify-toc',
+  );
+
+  $form['advanced']['position_fixed_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Fixed position class'),
+    '#default_value' => $config->get('position_fixed_class') ?? 'is-fixed',
+  );
+
+  $form['advanced']['fixed_sidebar_offset'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Fixed sidebar offset'),
+    '#default_value' => $config->get('fixed_sidebar_offset') ?? 'auto',
+  );
+
+  $form['#config'] = 'tocify.settings';
+  return system_settings_form($form);
+}

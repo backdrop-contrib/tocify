@@ -1,0 +1,20 @@
+{
+  "content_selector": ".node-content",
+  "scroll_offset": 80,
+  "collapse_depth": 6,
+  "smooth_scroll": true,
+  "ordered_list": false,
+  "heading_selector": "h1, h2, h3",
+  "include_html": false,
+  "highlight_on_scroll": true,
+  "disable_toc_scroll_sync": false,
+  "active_link_class": "is-active-link",
+  "list_class": "toc-list",
+  "link_class": "toc-link",
+  "extra_link_class": "",
+  "headings_offset": 0,
+  "throttle_timeout": 50,
+  "position_fixed_selector": "#tocify-toc",
+  "position_fixed_class": "is-fixed",
+  "fixed_sidebar_offset": "auto"
+}

@@ -1,0 +1,106 @@
+.block-tocify-tocify-toc-block {
+  width: 100%;
+  float: right;
+  top: 133px;
+  position: sticky;
+  z-index: 99999;
+  background: white;
+  /* 👈 Ensure the outer block is white */
+}
+
+.block-tocify-tocify-toc-block .block-content {
+  position: relative;
+}
+
+/* Responsive fallback: make the block static on smaller screens */
+@media (max-width: 768px) {
+  .block-tocify-tocify-toc-block {
+    float: none;
+    position: static;
+    top: auto;
+  }
+}
+
+ul.toc-list {
+  list-style-type: disc;
+  /* Top-level: solid circle */
+  padding-left: 1.5em;
+}
+
+ul.toc-list ul {
+  list-style-type: circle;
+  /* Second-level: hollow circle */
+  padding-left: 1.5em;
+}
+
+ul.toc-list ul ul {
+  list-style-type: square;
+  /* Third-level: small solid square */
+  padding-left: 1.5em;
+}
+
+
+ol.toc-list {
+  counter-reset: item;
+  list-style-type: decimal;
+  padding-left: 1.5em;
+}
+
+ol.toc-list>li {
+  display: block;
+  counter-increment: item;
+}
+
+ol.toc-list>li::before {
+  content: counters(item, ".") ". ";
+  font-weight: normal;
+  display: inline-block;
+  width: 2em;
+}
+
+ol.toc-list ol {
+  counter-reset: item;
+  list-style-type: decimal;
+  padding-left: 1.5em;
+}
+
+.tocify-collapse-enabled .toc-list .is-collapsed>.toc-list {
+  display: none;
+}
+
+#tocify-toc *::before,
+#tocify-toc *::after {
+  display: none !important;
+  content: none !important;
+}
+
+
+
+
+.toc-list-item.is-active-li {
+  border-right: 4px solid #44525E;
+  background-color: rgba(40, 40, 0, 0.06);
+}
+
+li.toc-list-item {
+  padding: 5px 0;
+  margin: 0;
+}
+
+.toc-list-item.is-active-li a {
+  font-weight: normal;
+}
+
+#tocify-toc li:hover {
+  background-color: rgba(40, 40, 0, 0.06);
+  border-right: 4px solid gold;
+  color: #1794c7;
+}
+
+#tocify-toc a:hover {
+  text-decoration: none;
+}
+
+#tocify-toc a {
+  text-decoration: none;
+}
