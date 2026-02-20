@@ -52,7 +52,8 @@
         activeLinkClass: config.tocifyActiveLinkClass || 'is-active-link',
         listClass: config.tocifyListClass || 'toc-list',
         linkClass: config.tocifyLinkClass || 'toc-link',
-        extraLinkClass: config.tocifyExtraLinkClass || '',
+        // tocbot expects plural: extraLinkClasses
+        extraLinkClasses: config.tocifyExtraLinkClass || '',
         headingsOffset: parseInt(config.tocifyHeadingsOffset || 0),
         throttleTimeout: parseInt(config.tocifyThrottleTimeout || 50),
         collapsedClass: config.tocifyCollapsedClass || 'is-collapsed',
