@@ -8,6 +8,9 @@
       const offset = parseInt(config.tocifyOffset || 80, 10);
       const includeHtml = !!config.tocifyIncludeHtml;
       const headingSelector = config.tocifyHeadingSelector || 'h1, h2, h3, h4, h5, h6';
+      const linkClass = 'toc-link';
+      const activeLinkClass = 'is-active-link';
+      const activeListItemClass = 'is-active-li';
       let lastClickedId = null;
 
       const contentArea = document.querySelector(selector);
@@ -49,9 +52,9 @@
         includeHtml: includeHtml,
         escapeHtml: !includeHtml,
         disableTocScrollSync: !!config.tocifyDisableTocScrollSync,
-        activeLinkClass: config.tocifyActiveLinkClass || 'is-active-link',
-        listClass: config.tocifyListClass || 'toc-list',
-        linkClass: config.tocifyLinkClass || 'toc-link',
+        activeLinkClass: activeLinkClass,
+        listClass: 'toc-list',
+        linkClass: linkClass,
         // tocbot expects plural: extraLinkClasses
         extraLinkClasses: config.tocifyExtraLinkClass || '',
         headingsOffset: parseInt(config.tocifyHeadingsOffset || 0),
@@ -75,17 +78,17 @@
       }
 
       // Ensure clicks set the active state and remember the last clicked item.
-      document.querySelectorAll('#tocify-toc a.toc-link').forEach(link => {
+      document.querySelectorAll('#tocify-toc a.' + linkClass).forEach(link => {
         link.addEventListener('click', () => {
           const href = link.getAttribute('href') || '';
           if (href.startsWith('#')) {
             lastClickedId = href.slice(1);
-            document.querySelectorAll('#tocify-toc .' + (config.tocifyActiveLinkClass || 'is-active-link')).forEach(el => el.classList.remove(config.tocifyActiveLinkClass || 'is-active-link'));
-            document.querySelectorAll('#tocify-toc .' + 'is-active-li').forEach(el => el.classList.remove('is-active-li'));
-            link.classList.add(config.tocifyActiveLinkClass || 'is-active-link');
+            document.querySelectorAll('#tocify-toc .' + activeLinkClass).forEach(el => el.classList.remove(activeLinkClass));
+            document.querySelectorAll('#tocify-toc .' + activeListItemClass).forEach(el => el.classList.remove(activeListItemClass));
+            link.classList.add(activeLinkClass);
             const li = link.closest('li');
             if (li) {
-              li.classList.add('is-active-li');
+              li.classList.add(activeListItemClass);
             }
           }
         });
@@ -95,14 +98,14 @@
       if (config.tocifyDisableTocScrollSync) {
         const enforceClickedActive = () => {
           if (!lastClickedId) return;
-          const target = document.querySelector('#tocify-toc a.toc-link[href="#' + lastClickedId + '"]');
+          const target = document.querySelector('#tocify-toc a.' + linkClass + '[href="#' + lastClickedId + '"]');
           if (!target) return;
-          document.querySelectorAll('#tocify-toc .' + (config.tocifyActiveLinkClass || 'is-active-link')).forEach(el => el.classList.remove(config.tocifyActiveLinkClass || 'is-active-link'));
-          document.querySelectorAll('#tocify-toc .' + 'is-active-li').forEach(el => el.classList.remove('is-active-li'));
-          target.classList.add(config.tocifyActiveLinkClass || 'is-active-link');
+          document.querySelectorAll('#tocify-toc .' + activeLinkClass).forEach(el => el.classList.remove(activeLinkClass));
+          document.querySelectorAll('#tocify-toc .' + activeListItemClass).forEach(el => el.classList.remove(activeListItemClass));
+          target.classList.add(activeLinkClass);
           const li = target.closest('li');
           if (li) {
-            li.classList.add('is-active-li');
+            li.classList.add(activeListItemClass);
           }
         };
         window.addEventListener('scroll', enforceClickedActive, { passive: true });
