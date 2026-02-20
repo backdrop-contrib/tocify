@@ -1,6 +1,8 @@
 # Tocify
 
-Provides a configurable Table of Contents (TOC) block for Backdrop CMS using the tocbot library. It scans page headings, assigns anchor IDs, and renders a scroll-synced, collapsible TOC with sensible defaults and a small set of options.
+Tocify provides a configurable Table of Contents (TOC) block for Backdrop CMS using the **tocbot** JavaScript library. It scans page headings, assigns anchor IDs, and renders a scroll-synced, collapsible TOC with smooth scrolling and sensible defaults.
+
+**Note:** Backdrop also has a separate contributed module named **Tocbot**, which uses the same underlying JS library. Tocify differs in that it was written from the ground up specifically for Backdrop and does not include any legacy Drupal code. 
 
 ## Requirements
 
