@@ -171,18 +171,21 @@ function tocify_settings_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Enable smooth scroll'),
     '#default_value' => $config->get('smooth_scroll'),
+    '#description' => t('Animate jumps to headings instead of instantly snapping.'),
   );
 
   $form['ordered_list'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use ordered list'),
     '#default_value' => $config->get('ordered_list'),
+    '#description' => t('Render the TOC as a numbered list instead of bullets.'),
   );
 
   $form['include_html'] = array(
     '#type' => 'checkbox',
     '#title' => t('Include HTML inside headings'),
     '#default_value' => $config->get('include_html'),
+    '#description' => t('Keep inline markup (e.g. &lt;em&gt;, &lt;strong&gt;, &lt;code&gt;) inside heading text within the TOC.'),
   );
 
   $form['advanced'] = array(
@@ -203,54 +206,63 @@ function tocify_settings_form($form, &$form_state) {
     '#type' => 'number',
     '#title' => t('Headings offset (for highlighting logic)'),
     '#default_value' => $config->get('headings_offset') ?? 0,
+    '#description' => t('Pixels to shift the viewport trigger used to mark a heading active. Negative highlights sooner; positive highlights lower on the page.'),
   );
 
   $form['advanced']['throttle_timeout'] = array(
     '#type' => 'number',
     '#title' => t('Throttle timeout (ms)'),
     '#default_value' => $config->get('throttle_timeout') ?? 50,
+    '#description' => t('Delay between scroll/resize handling for TOC updates; lower is more reactive, higher saves CPU.'),
   );
 
   $form['advanced']['active_link_class'] = array(
     '#type' => 'textfield',
     '#title' => t('Active link class'),
     '#default_value' => $config->get('active_link_class') ?? 'is-active-link',
+    '#description' => t('CSS class added to the active TOC link.'),
   );
 
   $form['advanced']['list_class'] = array(
     '#type' => 'textfield',
     '#title' => t('List class'),
     '#default_value' => $config->get('list_class') ?? 'toc-list',
+    '#description' => t('CSS class applied to the root TOC list (ul/ol).'),
   );
 
   $form['advanced']['link_class'] = array(
     '#type' => 'textfield',
     '#title' => t('Link class'),
     '#default_value' => $config->get('link_class') ?? 'toc-link',
+    '#description' => t('CSS class applied to TOC links.'),
   );
 
   $form['advanced']['extra_link_class'] = array(
     '#type' => 'textfield',
     '#title' => t('Extra link class'),
     '#default_value' => $config->get('extra_link_class') ?? '',
+    '#description' => t('Optional additional class appended to every TOC link.'),
   );
 
   $form['advanced']['position_fixed_selector'] = array(
     '#type' => 'textfield',
     '#title' => t('Fixed position selector'),
     '#default_value' => $config->get('position_fixed_selector') ?? '#tocify-toc',
+    '#description' => t('Selector for the TOC container that should receive the fixed position class when stuck.'),
   );
 
   $form['advanced']['position_fixed_class'] = array(
     '#type' => 'textfield',
     '#title' => t('Fixed position class'),
     '#default_value' => $config->get('position_fixed_class') ?? 'is-fixed',
+    '#description' => t('CSS class toggled on the TOC container when it becomes fixed.'),
   );
 
   $form['advanced']['fixed_sidebar_offset'] = array(
     '#type' => 'textfield',
     '#title' => t('Fixed sidebar offset'),
     '#default_value' => $config->get('fixed_sidebar_offset') ?? 'auto',
+    '#description' => t('Value passed to tocbot to offset fixed positioning (number of pixels or "auto").'),
   );
 
   $form['#config'] = 'tocify.settings';
