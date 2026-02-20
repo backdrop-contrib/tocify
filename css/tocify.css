@@ -74,6 +74,11 @@ ol.toc-list ol {
   content: none !important;
 }
 
+#tocify-toc ol.toc-list > li::before {
+  display: inline-block !important; /* Re-enable pseudo element for ordered numbering */
+  content: counters(item, ".") ". " !important;
+}
+
 
 
 
