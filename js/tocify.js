@@ -6,6 +6,7 @@
       const config = (typeof Backdrop !== 'undefined' && Backdrop.settings) || {};
       const selector = config.tocifySelector || '.node-content';
       const offset = parseInt(config.tocifyOffset || 80, 10);
+      const includeHtml = !!config.tocifyIncludeHtml;
       const headingSelector = config.tocifyHeadingSelector || 'h1, h2, h3, h4, h5, h6';
 
       const contentArea = document.querySelector(selector);
@@ -44,8 +45,8 @@
         positionFixedSelector: config.tocifyPositionFixedSelector || '#tocify-toc',
         positionFixedClass: config.tocifyPositionFixedClass || 'is-fixed',
         fixedSidebarOffset: config.tocifyFixedSidebarOffset || 'auto',
-        includeHtml: !!config.tocifyIncludeHtml,
-        escapeHtml: !config.tocifyIncludeHtml,
+        includeHtml: includeHtml,
+        escapeHtml: !includeHtml,
         disableTocScrollSync: !!config.tocifyDisableTocScrollSync,
         activeLinkClass: config.tocifyActiveLinkClass || 'is-active-link',
         listClass: config.tocifyListClass || 'toc-list',
