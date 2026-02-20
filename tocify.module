@@ -84,7 +84,10 @@ function tocify_block_view($delta = '') {
     $build['#attached']['js'][] = $path . '/js/tocify.js';
     $build['#attached']['css'][] = $path . '/css/tocbot.css';
     $build['#attached']['css'][] = $path . '/css/tocify.css';
-    $build['#attached']['js'][] = ['type' => 'setting', 'data' => $settings];
+    $build['#attached']['js'][] = [
+      'type' => 'setting',
+      'data' => ['tocify' => $settings] + $settings,
+    ];
 
     if (!empty($config['enable_collapse'])) {
       $build['#attached']['js'][] = [

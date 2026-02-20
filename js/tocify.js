@@ -3,14 +3,18 @@
     attach: function (context, settings) {
       if (typeof tocbot === 'undefined') return;
 
-      const config = (typeof Backdrop !== 'undefined' && Backdrop.settings) || {};
+      const rawConfig = (settings && (settings.tocify || settings)) ||
+        ((typeof Backdrop !== 'undefined' && Backdrop.settings) ? (Backdrop.settings.tocify || Backdrop.settings) : {});
+      const config = rawConfig.tocify || rawConfig;
       const selector = config.tocifySelector || '.node-content';
-      const offset = parseInt(config.tocifyOffset || 80, 10);
+      const parsedOffset = parseInt(config.tocifyOffset, 10);
+      const offset = isNaN(parsedOffset) ? 80 : parsedOffset;
       const includeHtml = !!config.tocifyIncludeHtml;
       const headingSelector = config.tocifyHeadingSelector || 'h1, h2, h3, h4, h5, h6';
       const linkClass = 'toc-link';
       const activeLinkClass = 'is-active-link';
       const activeListItemClass = 'is-active-li';
+      const smoothScroll = !!config.tocifySmoothScroll;
       let lastClickedId = null;
 
       const contentArea = document.querySelector(selector);
@@ -49,7 +53,7 @@
         contentSelector: selector,
         headingSelector: config.tocifyHeadingSelector || 'h1, h2, h3, h4, h5, h6',
         collapseDepth: config.tocifyEnableCollapse ? parseInt(config.tocifyCollapseDepth || 6) : 0,
-        scrollSmooth: !!config.tocifySmoothScroll,
+        scrollSmooth: false,
         scrollSmoothOffset: offset,
         orderedList: !!config.tocifyOrderedList,
         ...(stickyEnabled ? {
@@ -70,6 +74,17 @@
         collapsedClass: config.tocifyCollapsedClass || 'is-collapsed',
       });
 
+      // Manual scroll handling so offset always applies, even when smooth scroll is disabled.
+      const scrollToHeading = (targetId) => {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const destination = target.getBoundingClientRect().top + window.pageYOffset + offset;
+        window.scrollTo({
+          top: destination,
+          behavior: smoothScroll ? 'smooth' : 'auto',
+        });
+      };
+
       // When scroll sync is disabled, forcibly stop tocbot from updating on scroll.
       if (config.tocifyDisableTocScrollSync) {
         // Remove tocbot’s internal scroll listener if present.
@@ -87,10 +102,18 @@
 
       // Ensure clicks set the active state and remember the last clicked item.
       document.querySelectorAll('#tocify-toc a.' + linkClass).forEach(link => {
-        link.addEventListener('click', () => {
+        if (link.dataset.tocifyBound) return;
+        link.dataset.tocifyBound = 'true';
+        link.addEventListener('click', (event) => {
           const href = link.getAttribute('href') || '';
           if (href.startsWith('#')) {
+            event.preventDefault();
+            event.stopPropagation();
             lastClickedId = href.slice(1);
+            scrollToHeading(lastClickedId);
+            if (typeof history !== 'undefined' && history.replaceState) {
+              history.replaceState(null, '', '#' + lastClickedId);
+            }
             document.querySelectorAll('#tocify-toc .' + activeLinkClass).forEach(el => el.classList.remove(activeLinkClass));
             document.querySelectorAll('#tocify-toc .' + activeListItemClass).forEach(el => el.classList.remove(activeListItemClass));
             link.classList.add(activeLinkClass);
