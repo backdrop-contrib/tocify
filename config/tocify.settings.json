@@ -1,5 +1,5 @@
 {
-  "content_selector": ".node-content",
+  "content_selector": ".content",
   "scroll_offset": 80,
   "collapse_depth": 6,
   "smooth_scroll": true,
