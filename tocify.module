@@ -66,15 +66,13 @@ function tocify_block_view($delta = '') {
       'tocifyHeadingSelector' => $config['heading_selector'] ?? 'h1, h2, h3',
       'tocifyIncludeHtml' => !empty($config['include_html']),
       'tocifyDisableTocScrollSync' => !empty($config['disable_toc_scroll_sync']),
+      'tocifyStickyEnabled' => !empty($config['sticky_toc']),
       'tocifyActiveLinkClass' => 'is-active-link',
       'tocifyListClass' => 'toc-list',
       'tocifyLinkClass' => 'toc-link',
       'tocifyExtraLinkClass' => $config['extra_link_class'] ?? '',
       'tocifyHeadingsOffset' => (int) ($config['headings_offset'] ?? 0),
       'tocifyThrottleTimeout' => (int) ($config['throttle_timeout'] ?? 50),
-      'tocifyPositionFixedSelector' => $config['position_fixed_selector'] ?? '#tocify-toc',
-      'tocifyPositionFixedClass' => $config['position_fixed_class'] ?? 'is-fixed',
-      'tocifyFixedSidebarOffset' => $config['fixed_sidebar_offset'] ?? 'auto',
       'tocifyCollapsedClass' => $config['collapsed_class'] ?? 'is-collapsed',
     ];
 
@@ -195,13 +193,6 @@ function tocify_settings_form($form, &$form_state) {
     '#collapsed' => TRUE,
   );
 
-  $form['advanced']['disable_toc_scroll_sync'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Disable scroll sync'),
-    '#default_value' => $config->get('disable_toc_scroll_sync'),
-    '#description' => t('Prevent the active TOC link from updating while scrolling; highlight only changes when a link is clicked.'),
-  );
-
   $form['advanced']['headings_offset'] = array(
     '#type' => 'number',
     '#title' => t('Headings offset (for highlighting logic)'),
@@ -223,25 +214,18 @@ function tocify_settings_form($form, &$form_state) {
     '#description' => t('Optional additional class appended to every TOC link.'),
   );
 
-  $form['advanced']['position_fixed_selector'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Fixed position selector'),
-    '#default_value' => $config->get('position_fixed_selector') ?? '#tocify-toc',
-    '#description' => t('Selector for the TOC container that should receive the fixed position class when stuck.'),
+  $form['advanced']['sticky_toc'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Make TOC sticky'),
+    '#default_value' => $config->get('sticky_toc'),
+    '#description' => t('When enabled, the TOC uses default sticky behavior and classes (selector #tocify-toc, class is-fixed).'),
   );
 
-  $form['advanced']['position_fixed_class'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Fixed position class'),
-    '#default_value' => $config->get('position_fixed_class') ?? 'is-fixed',
-    '#description' => t('CSS class toggled on the TOC container when it becomes fixed.'),
-  );
-
-  $form['advanced']['fixed_sidebar_offset'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Fixed sidebar offset'),
-    '#default_value' => $config->get('fixed_sidebar_offset') ?? 'auto',
-    '#description' => t('Value passed to tocbot to offset fixed positioning (number of pixels or "auto").'),
+  $form['advanced']['disable_toc_scroll_sync'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable scroll sync'),
+    '#default_value' => $config->get('disable_toc_scroll_sync'),
+    '#description' => t('Prevent the active TOC link from updating while scrolling; highlight only changes when a link is clicked.'),
   );
 
   $form['#config'] = 'tocify.settings';

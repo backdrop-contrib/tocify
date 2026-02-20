@@ -1,23 +1,27 @@
-.block-tocify-tocify-toc-block {
-  width: 100%;
-  float: right;
-  top: 133px;
-  position: sticky;
-  z-index: 99999;
-  background: white;
-  /* 👈 Ensure the outer block is white */
-}
-
 .block-tocify-tocify-toc-block .block-content {
   position: relative;
 }
 
+/* Sticky only when tocbot marks the TOC as fixed */
+.block-tocify-tocify-toc-block.is-fixed {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 133px;
+  z-index: 99999;
+  width: 100%;
+  background: #fff;
+  display: block;
+}
+
 /* Responsive fallback: make the block static on smaller screens */
 @media (max-width: 768px) {
-  .block-tocify-tocify-toc-block {
-    float: none;
+  .block-tocify-tocify-toc-block.is-fixed {
     position: static;
     top: auto;
+  }
+
+  .block-tocify-tocify-toc-block {
+    float: none;
   }
 }
 

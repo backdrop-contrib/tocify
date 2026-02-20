@@ -38,6 +38,12 @@
         tocbot.destroy();
       }
 
+      const stickyEnabled = !!config.tocifyStickyEnabled;
+
+      const positionFixedSelector = stickyEnabled ? '.block-tocify-tocify-toc-block' : undefined;
+      const positionFixedClass = stickyEnabled ? 'is-fixed' : undefined;
+      const fixedSidebarOffset = stickyEnabled ? 'auto' : undefined;
+
       tocbot.init({
         tocSelector: '#tocify-toc',
         contentSelector: selector,
@@ -46,9 +52,11 @@
         scrollSmooth: !!config.tocifySmoothScroll,
         scrollSmoothOffset: offset,
         orderedList: !!config.tocifyOrderedList,
-        positionFixedSelector: config.tocifyPositionFixedSelector || '#tocify-toc',
-        positionFixedClass: config.tocifyPositionFixedClass || 'is-fixed',
-        fixedSidebarOffset: config.tocifyFixedSidebarOffset || 'auto',
+        ...(stickyEnabled ? {
+          positionFixedSelector: positionFixedSelector,
+          positionFixedClass: positionFixedClass,
+          fixedSidebarOffset: fixedSidebarOffset,
+        } : {}),
         includeHtml: includeHtml,
         escapeHtml: !includeHtml,
         disableTocScrollSync: !!config.tocifyDisableTocScrollSync,
