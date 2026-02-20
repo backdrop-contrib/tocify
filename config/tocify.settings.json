@@ -12,7 +12,7 @@
   "list_class": "toc-list",
   "link_class": "toc-link",
   "extra_link_class": "",
-  "headings_offset": 0,
+  "headings_offset": -50,
   "throttle_timeout": 50,
   "position_fixed_selector": "#tocify-toc",
   "position_fixed_class": "is-fixed",
