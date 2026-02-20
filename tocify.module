@@ -66,9 +66,9 @@ function tocify_block_view($delta = '') {
       'tocifyHeadingSelector' => $config['heading_selector'] ?? 'h1, h2, h3',
       'tocifyIncludeHtml' => !empty($config['include_html']),
       'tocifyDisableTocScrollSync' => !empty($config['disable_toc_scroll_sync']),
-      'tocifyActiveLinkClass' => $config['active_link_class'] ?? 'is-active-link',
-      'tocifyListClass' => $config['list_class'] ?? 'toc-list',
-      'tocifyLinkClass' => $config['link_class'] ?? 'toc-link',
+      'tocifyActiveLinkClass' => 'is-active-link',
+      'tocifyListClass' => 'toc-list',
+      'tocifyLinkClass' => 'toc-link',
       'tocifyExtraLinkClass' => $config['extra_link_class'] ?? '',
       'tocifyHeadingsOffset' => (int) ($config['headings_offset'] ?? 0),
       'tocifyThrottleTimeout' => (int) ($config['throttle_timeout'] ?? 50),
@@ -214,27 +214,6 @@ function tocify_settings_form($form, &$form_state) {
     '#title' => t('Throttle timeout (ms)'),
     '#default_value' => $config->get('throttle_timeout') ?? 50,
     '#description' => t('Delay between scroll/resize handling for TOC updates; lower is more reactive, higher saves CPU.'),
-  );
-
-  $form['advanced']['active_link_class'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Active link class'),
-    '#default_value' => $config->get('active_link_class') ?? 'is-active-link',
-    '#description' => t('CSS class added to the active TOC link.'),
-  );
-
-  $form['advanced']['list_class'] = array(
-    '#type' => 'textfield',
-    '#title' => t('List class'),
-    '#default_value' => $config->get('list_class') ?? 'toc-list',
-    '#description' => t('CSS class applied to the root TOC list (ul/ol).'),
-  );
-
-  $form['advanced']['link_class'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Link class'),
-    '#default_value' => $config->get('link_class') ?? 'toc-link',
-    '#description' => t('CSS class applied to TOC links.'),
   );
 
   $form['advanced']['extra_link_class'] = array(
