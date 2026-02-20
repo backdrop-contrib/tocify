@@ -39,7 +39,7 @@
         headingSelector: config.tocifyHeadingSelector || 'h1, h2, h3, h4, h5, h6',
         collapseDepth: config.tocifyEnableCollapse ? parseInt(config.tocifyCollapseDepth || 6) : 0,
         scrollSmooth: !!config.tocifySmoothScroll,
-        scrollSmoothOffset: 0,
+        scrollSmoothOffset: offset,
         orderedList: !!config.tocifyOrderedList,
         positionFixedSelector: config.tocifyPositionFixedSelector || '#tocify-toc',
         positionFixedClass: config.tocifyPositionFixedClass || 'is-fixed',
