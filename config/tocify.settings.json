@@ -4,7 +4,7 @@
   "collapse_depth": 6,
   "smooth_scroll": true,
   "ordered_list": false,
-  "heading_selector": "h1, h2, h3",
+  "heading_selector": "h1, h2, h3, h4, h5, h6",
   "include_html": false,
   "highlight_on_scroll": true,
   "disable_toc_scroll_sync": false,
