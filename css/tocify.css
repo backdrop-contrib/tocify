@@ -46,16 +46,18 @@ ol.toc-list {
   padding-left: 1.5em;
 }
 
-ol.toc-list>li {
+ol.toc-list>li,
+ol.toc-list ol>li {
   display: block;
   counter-increment: item;
 }
 
-ol.toc-list>li::before {
+ol.toc-list>li::before,
+ol.toc-list ol>li::before {
   content: counters(item, ".") ". ";
   font-weight: normal;
   display: inline-block;
-  width: 2em;
+  margin-right: 0.35em;
 }
 
 ol.toc-list ol {
@@ -74,8 +76,8 @@ ol.toc-list ol {
   content: none !important;
 }
 
-#tocify-toc ol.toc-list > li::before {
-  display: inline-block !important; /* Re-enable pseudo element for ordered numbering */
+#tocify-toc ol.toc-list li::before {
+  display: inline-block !important;
   content: counters(item, ".") ". " !important;
 }
 
