@@ -196,6 +196,7 @@ function tocify_settings_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Disable scroll sync'),
     '#default_value' => $config->get('disable_toc_scroll_sync'),
+    '#description' => t('Prevent the active TOC link from updating while scrolling; highlight only changes when a link is clicked.'),
   );
 
   $form['advanced']['headings_offset'] = array(
